@@ -1,0 +1,23 @@
+# Every push to main is built by the PLATFORM's build workflow (not by anything in
+# this repo). That is what makes the image deployable.
+name: ci
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+  attestations: write
+
+jobs:
+  build:
+    # Build only the customer's copy (a vendor's own mirror source must not build)
+    if: github.repository_owner == 'vgd42-platform'
+    uses: vgd42-platform/platform-config/.github/workflows/build.yml@main
+    with:
+      vendor: acme
+      app: shop
+    secrets: inherit
